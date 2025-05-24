@@ -120,7 +120,7 @@ fun TelaPermissaoNotificacao() {
 
 @Composable
 fun Item(notificacao: NotificacaoPush){
-
+    val dataFormatada = {NotificacaoUtil.formatarData(notificacao.dataLancamento)}
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,6 +129,7 @@ fun Item(notificacao: NotificacaoPush){
         Column(modifier = Modifier.padding(16.dp)) {
             Text(notificacao.titulo)
             Text(notificacao.texto)
+            Text("Data do lançamento $dataFormatada")
         }
     }
 }

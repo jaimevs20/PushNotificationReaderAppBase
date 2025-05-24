@@ -7,6 +7,8 @@ import android.util.Log
 import com.kotlin_app.gastospush.data.model.NotificacaoPush
 import com.kotlin_app.gastospush.data.repository.NotificacaoRepository
 import com.kotlin_app.gastospush.util.NotificacaoUtil
+import java.time.Instant
+import java.util.Date
 
 class NotificationMonitorService : NotificationListenerService(){
 
@@ -28,7 +30,8 @@ class NotificationMonitorService : NotificationListenerService(){
                     NotificacaoPush(
                     titulo = tituloAdd,
                     texto = textoAdd,
-                    valorItem =  NotificacaoUtil.extrairValor(textoAdd)
+                    valorItem =  NotificacaoUtil.extrairValor(textoAdd),
+                    dataLancamento =  Date.from(Instant.now())
                 ))
             }
         }
