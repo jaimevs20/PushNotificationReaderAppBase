@@ -1,9 +1,8 @@
 package com.kotlin_app.gastospush.ui.screen
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,11 +17,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.kotlin_app.gastospush.data.model.Gasto
-import com.kotlin_app.gastospush.service.NotificationMonitorService
 import com.kotlin_app.gastospush.util.NotificacaoUtil
 import java.time.Instant
 import java.util.Date
-import kotlin.math.max
 
 @Composable
 fun TelaPrincipal(){
@@ -127,6 +124,14 @@ fun TelaPermissaoNotificacao() {
 
 @Composable
 fun GastoItem(gasto: Gasto, notificacaoUtil: NotificacaoUtil){
+
+    val dataFormatada = notificacaoUtil.formatarData(gasto.dataCompra)
+    LaunchedEffect(gasto) {
+        if (notificacaoUtil.checarNotificacao(gasto.descricaoCompra)) {
+            Log.d("AppGastoLog", "Data da compra: $dataFormatada")
+        }
+    }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -136,7 +141,8 @@ fun GastoItem(gasto: Gasto, notificacaoUtil: NotificacaoUtil){
             val notificacao = "Compra: " + "R$" + notificacaoUtil.formatarValor(gasto.valorCompra)// SERÁ SUBSTITUÍDO PELO CONTEÚDO DO PUSH NOTIFICATION - IMPLEMENTAR UM SERVIÇO PARA ISSO
             if (notificacaoUtil.checarNotificacao(gasto.descricaoCompra)){
                 Text(notificacao)
-                Text(notificacaoUtil.formatarData(gasto.dataCompra))
+                Text("Data da compra $dataFormatada")
+
             }
         }
     }

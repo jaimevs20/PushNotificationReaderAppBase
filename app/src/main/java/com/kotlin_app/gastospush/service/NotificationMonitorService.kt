@@ -13,8 +13,8 @@ class NotificationMonitorService : NotificationListenerService(){
             val title = extras.getString(Notification.EXTRA_TITLE)
             val text = extras.getString(Notification.EXTRA_TEXT)
 
-            if (NotificacaoUtil.checarNotificacao(text.toString())) {
-                Log.d("Notificação: $extras\n", "Título: $title | Texto: $text")
+            if (NotificacaoUtil.checarNotificacao(text.toString()) || NotificacaoUtil.checarNotificacao(title.toString())) {
+                Log.d("AppGastoLog", "Título: $title | Texto: $text | Extras: $extras")
                 // Aqui você pode processar e armazenar o gasto
             }
         }
