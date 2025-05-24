@@ -2,36 +2,32 @@ package com.kotlin_app.gastospush.ui.screen
 
 import android.content.Intent
 import android.provider.Settings
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.kotlin_app.gastospush.data.model.Gasto
+import com.kotlin_app.gastospush.data.model.NotificacaoPush
+import com.kotlin_app.gastospush.data.repository.NotificacaoRepository
 import com.kotlin_app.gastospush.util.NotificacaoUtil
-import java.time.Instant
-import java.util.Date
 
 @Composable
 fun TelaPrincipal(){
-    val gastos = remember { mutableStateListOf<Gasto>() }
     val notificacaoUtil = NotificacaoUtil
     val listState = rememberLazyListState()
+    val notificacoesPush = NotificacaoRepository.notificacoes
 
     // Efeito que monitora mudanças na lista - Scroll
-    LaunchedEffect(gastos.size) {
-        if (gastos.isNotEmpty()) {
+    LaunchedEffect(notificacoesPush.size) {
+        if (notificacoesPush.isNotEmpty()) {
             // Scroll suave para o final
-            listState.animateScrollToItem(gastos.size - 1)
+            listState.animateScrollToItem(notificacoesPush.size - 1)
         }
     }
 
@@ -40,14 +36,14 @@ fun TelaPrincipal(){
             TopAppBar(
                 title = { Text("Trilha dos gastos")}
             )
-        },
+        }/*,
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 // Simula uma notificação de gasto
                 gastos.add(
                     // TODO: CAPTURAR A NOTIFICAÇÃO E TRATAR AQUI
                     Gasto(
-                        descricaoCompra = "Compra no app",
+                        descricaoCompra = "Compra",
                         valorCompra = (5..50).random().toDouble(),
                         dataCompra = Date.from(Instant.now())
                     )
@@ -55,7 +51,7 @@ fun TelaPrincipal(){
             }) {
                 Icon(Icons.Default.Add, contentDescription = "Adicionar")
             }
-        },
+        }*/,
         bottomBar = {
             Surface(
                 modifier = Modifier
@@ -65,7 +61,7 @@ fun TelaPrincipal(){
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = "Total: ${notificacaoUtil.formatarValor(gastos.sumOf { it.valorCompra })}",
+                        text = "Total: ${notificacaoUtil.formatarValor(notificacoesPush.sumOf { it.valorItem })}",
                         style = MaterialTheme.typography.h6,
                         fontWeight = FontWeight.Bold
                     )
@@ -87,7 +83,7 @@ fun TelaPrincipal(){
                 modifier = Modifier.weight(1f),
                 contentPadding = PaddingValues(bottom = 16.dp)
             ) {
-                items(gastos) { gasto -> GastoItem(gasto, notificacaoUtil) }
+                items(notificacoesPush) { notificacao -> Item(notificacao) }
             }
         }
     }
@@ -123,14 +119,7 @@ fun TelaPermissaoNotificacao() {
 }
 
 @Composable
-fun GastoItem(gasto: Gasto, notificacaoUtil: NotificacaoUtil){
-
-    val dataFormatada = notificacaoUtil.formatarData(gasto.dataCompra)
-    LaunchedEffect(gasto) {
-        if (notificacaoUtil.checarNotificacao(gasto.descricaoCompra)) {
-            Log.d("AppGastoLog", "Data da compra: $dataFormatada")
-        }
-    }
+fun Item(notificacao: NotificacaoPush){
 
     Card(
         modifier = Modifier
@@ -138,12 +127,8 @@ fun GastoItem(gasto: Gasto, notificacaoUtil: NotificacaoUtil){
             .padding(vertical = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            val notificacao = "Compra: " + "R$" + notificacaoUtil.formatarValor(gasto.valorCompra)// SERÁ SUBSTITUÍDO PELO CONTEÚDO DO PUSH NOTIFICATION - IMPLEMENTAR UM SERVIÇO PARA ISSO
-            if (notificacaoUtil.checarNotificacao(gasto.descricaoCompra)){
-                Text(notificacao)
-                Text("Data da compra $dataFormatada")
-
-            }
+            Text(notificacao.titulo)
+            Text(notificacao.texto)
         }
     }
 }
